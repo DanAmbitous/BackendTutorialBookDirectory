@@ -4,10 +4,18 @@ const AuthorSchema = require('../models/authorModel')
 
 //All author route
 router.get('/', async (req, res) => {
-  try {
-    const authors = await AuthorSchema.find({})
+  let searchOptions = {}
 
-    res.render('author/authorIndex', {author: authors})
+  if (req.query.name != null && req.query.name != '') {
+    searchOptions.name = new RegExp(req.query.name, 'i')
+  }
+  try {
+    const authors = await AuthorSchema.find(searchOptions)
+
+    res.render('author/authorIndex', {
+      authors: authors,
+      searchOptions: req.query
+    })
 
     console.log(authors)
   } catch (error) {
